@@ -1,19 +1,59 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <TodoHeader></TodoHeader>
+    <TodoInput v-on:addTodo="addTodo"></TodoInput>
+    <TodoList v-bind:propsdata="todoItems" @removeTodo="removeTodo"></TodoList>
+    <TodoFooter v-on:removeAll="clearAll"></TodoFooter>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TodoHeader from './components/TodoHeader.vue'
+import TodoList from './components/TodoList.vue'
+import TodoInput from './components/TodoInput.vue'
+import TodoFooter from './components/TodoFooter.vue'
 
 export default {
-  name: 'App',
+  data() {
+    return {
+      todoItems: []
+    };
+  },
+  created() {
+    if(localStorage.length > 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        if(localStorage.key(i) != "loglevel:webpack-dev-server") {
+          this.todoItems.push(localStorage.key(i));
+        }
+      }
+    }
+  },
+  methods: {
+    addTodo(todoItem) {
+      localStorage.setItem(todoItem, todoItem);
+      this.todoItems.push(todoItem);
+    },
+    clearAll() {
+      localStorage.clear();
+      this.todoItems = [];
+    },
+    removeTodo(todoItem, index) {
+      localStorage.removeItem(todoItem);
+      this.todoItems.splice(index, 1);
+    },
+    checkedTodo(todoItem, index) {
+     localStorage.checkedTodo(todoItem);
+     alert(todoItem);
+     alert(index);
+    }
+  },
   components: {
-    HelloWorld
+    TodoHeader,
+    TodoInput,
+    TodoList,
+    TodoFooter
   }
-}
+};
 </script>
 
 <style>
@@ -24,5 +64,19 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+input {
+  border-style: groove;
+  width: 200px;
+  font-size: 14px;
+}
+
+button {
+  border-style: groove;
+}
+
+.shadow {
+  box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.03);
 }
 </style>
